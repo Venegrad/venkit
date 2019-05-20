@@ -1,0 +1,149 @@
+
+
+body
+  min-width 300px
+
+html,body,figure,hr,blockquote
+  margin 0
+  padding 0
+
+
+.{framework_class_prefix}g
+  max-width 2000px
+  width 100%
+  margin-left auto
+  margin-right auto
+  min-height 100vh
+  min-width 300px
+  overflow hidden
+  box-sizing border-box
+  *
+    box-sizing border-box
+    -webkit-tap-highlight-color transparent
+    outline none
+
+b, strong
+  font-weight 700
+
+input[type=number]
+    -moz-appearance:textfield
+    &::-webkit-inner-spin-button
+      -webkit-appearance: none
+    &::-webkit-outer-spin-button
+      -webkit-appearance: none
+
+code
+  font-family inherit
+
+pre
+  width 100%
+  code
+    display block
+
+hr
+  border 0
+
+table
+  border-collapse collapse
+  width 100%
+
+input,button,textarea,select,option
+  outline none !important
+  border-radius 0
+  margin 0
+  box-shadow none
+  -webkit-appearance none
+  appearance none
+
+input:not([type='submit']),textarea,select,textarea
+  width 100%
+  
+button
+  cursor: pointer
+  border: none
+  background: none
+  padding: 0
+  color: inherit
+
+input::-ms-clear
+  display none
+
+input::-webkit-contacts-auto-fill-button
+  opacity 0
+
+textarea::-webkit-contacts-auto-fill-button
+  opacity 0
+
+article,aside,footer,header,nav,section,audio,video,picture,main
+  display block
+
+mark, code
+  padding-left 3px
+  padding-right 3px
+  display inline
+
+img
+  border 0
+  max-width 100%
+  vertical-align top
+
+button,input
+  line-height normal
+
+button,select
+  text-transform none
+
+button,input[type="button"],input[type="reset"],input[type="submit"],input[type="clear"]
+  cursor pointer
+  -webkit-appearance button
+  appearance button
+
+button[disabled],html input[disabled]
+  cursor default
+
+textarea
+  resize none
+
+address
+  font-style normal
+
+button::-moz-focus-inner,input[type="reset"]::-moz-focus-inner,input[type="button"]::-moz-focus-inner,input[type="submit"]::-moz-focus-inner,input[type="file"] > input[type="button"]::-moz-focus-inner
+  padding 0
+  border 0
+
+a, button, input[type='button'], input[type='submit']
+  text-decoration: none
+  transition all 0.3s ease
+  &:active, &:hover, &:focus
+    outline 0
+
+pre
+  margin 0
+
+p,h1,h2,h3,h4,h5
+  margin 0
+
+button
+  cursor pointer
+
+input, textarea, button
+  border 0
+
+ul, ol
+  list-style none
+  margin 0
+  padding 0
+
+ol
+  counter-reset: list
+  li
+    &:before
+      counter-increment: list
+      content: counter(list) ". "
+
+iframe
+  border 0px
+
+
+#pix2pix
+  max-width 999999px
