@@ -59,7 +59,7 @@ gulp.task('build:fonts', function() {
 })
 
 gulp.task('build:js', function(){
-  return gulp.src([srcPath+'js/libs/*.js', srcPath+'js/*.js'])
+  return gulp.src([srcPath+'vendor/**/*.js', srcPath+'js/*.js'])
     .pipe( plumber() )
     .pipe(concat('main.js'))
     .pipe( isDev ? noop() : uglify() )
