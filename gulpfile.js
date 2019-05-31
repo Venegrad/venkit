@@ -36,6 +36,9 @@ if ( isDev ) {
     gulp.watch(srcPath+'js/**/*.js', gulp.series('build:js', 'reload'))
     gulp.watch(srcPath+'php/**/*.php', gulp.series('build:php', 'reload'))
     gulp.watch(srcPath+'pug/**/*.pug', gulp.series('build:html', 'reload'))
+    gulp.watch(srcPath+'vendor/**/*', gulp.series('build:js', 'build:css', 'reload'))
+    gulp.watch(srcPath+'static/**/*', gulp.series('build:static', 'reload'))
+
   })
 
   gulp.task('reload', function(done) { browserSync.reload(); done() })
@@ -44,18 +47,22 @@ if ( isDev ) {
 gulp.task('build:img', function() {
   return gulp.src(srcPath+'img/**/*')
     .pipe( isDev ? noop() : imagemin() )
-      .pipe( gulp.dest(dstPath+'img'))
+    .pipe( gulp.dest(dstPath+'img'))
 })
 
 gulp.task('build:php', function() {
   return gulp.src(srcPath+'php/**/*')
-    .pipe( isDev ? noop() : imagemin() )
-      .pipe( gulp.dest(dstPath))
+    .pipe( gulp.dest(dstPath))
 })
 
 gulp.task('build:fonts', function() {
   return gulp.src(srcPath+'fonts/**/*')
   .pipe( gulp.dest(dstPath+'fonts'))
+})
+
+gulp.task('build:static', function() {
+  return gulp.src(srcPath+'static/**/*')
+  .pipe( gulp.dest(dstPath+'static'))
 })
 
 gulp.task('build:js', function(){
@@ -111,7 +118,7 @@ gulp.task('clean', function(){
     .pipe( clean() )
 })
 
-gulp.task('build', gulp.series('build:js', 'build:img', 'build:php', 'build:icons', 'build:css', 'build:html', 'build:fonts') )
+gulp.task('build', gulp.series('build:js', 'build:img', 'build:php', 'build:static', 'build:icons', 'build:css', 'build:html', 'build:fonts') )
 
 // start
 defaultTask = ['clean', 'build']
