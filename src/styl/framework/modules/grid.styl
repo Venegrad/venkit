@@ -297,14 +297,6 @@ if grid_frames is defined && grid_frames
                             &-shrink-{zs}--{index}{grid_inverted_class}
                                 flex-shrink: (zs / 10)
 
-        maw = {}
-        for index, key in grid_bpoint
-            push(maw, maw[index] = '(max-width: '+key+'px)')
-
-        miw = {}
-        for index, key in invert_hash(grid_bpoint)
-            push(miw, miw[index] = '(min-width: '+(key + 1)+'px)')
-
     gridgap(parametr = grid_gap)
         .{framework_class_prefix}grid
             margin-left: "%s%s" % (-(parametr / 2) grid_px)
