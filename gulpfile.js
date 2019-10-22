@@ -159,7 +159,7 @@ gulp.task('clean', function(){
     .pipe( clean() )
 })
 
-gulp.task('build', gulp.series('build:js', 'build:img', 'build:php', 'build:static', 'build:icons', 'build:css', 'build:html', 'build:fonts') )
+gulp.task('build', gulp.series('clean', 'build:icons', 'build:js', 'build:img', 'build:php', 'build:static', 'build:css', 'build:html', 'build:fonts') )
 gulp.task('build:final', gulp.series('tinypng', 'build'))
 
 
