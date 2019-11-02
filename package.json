@@ -1,5 +1,5 @@
 {
-  "name": "webven",
+  "name": "venegrad.com",
   "scripts": {
     "dev": "npm run watch",
     "watch": "cross-env NODE_ENV=development gulp",

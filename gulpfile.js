@@ -118,7 +118,7 @@ gulp.task('build:css', function(){
   return gulp.src(srcPath+'styl/framework/main.styl')
     .pipe( plumber() )
     .pipe( stylus({ use: nib(), 'include css': true, import: ['nib'], compress: false }) )
-    .pipe( isDev ? noop() : cssnano() )
+    .pipe( isDev ? noop() : cssnano({discardComments: {removeAll: true}}) )
     .pipe( gulp.dest(dstPath+'css') )
     .pipe( isDev ? browserSync.stream() : noop() )
 })
