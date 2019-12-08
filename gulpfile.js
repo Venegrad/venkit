@@ -138,6 +138,7 @@ gulp.task('build:icons', function(){
         prependUnicode: false,
         formats: ['ttf', 'eot', 'woff'],
         normalize: true,
+        fontHeight: 1000,
         timestamp: Math.round(Date.now()/1000)
     }))
     .on('glyphs', function(glyphs, options) {
@@ -145,6 +146,7 @@ gulp.task('build:icons', function(){
         .pipe( consolidate('lodash', {
           glyphs: glyphs,
           fontName: options.fontName,
+          fontHeight: 1000,
           fontPath: '../fonts/',
           className: 'i'
         }) )
