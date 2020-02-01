@@ -14,8 +14,12 @@ const cssnano = require('gulp-cssnano')
 const uglify = require('gulp-uglifyjs')
 const imagemin = require('gulp-imagemin')
 const tinypng = require('gulp-tinypng')
-const log = require('fancy-log')
+const rollup = require('gulp-rollup')
 const isDev = process.env.NODE_ENV === 'development'
+
+const rollupConfig = require('./rollup.config.js')
+rollupConfig.allowRealFiles = true // solves gulp-rollup hipotetical file system problem
+rollupConfig.rollup = require('rollup')
 
 const srcPath = './src/'
 const dstPath = './dist/'
@@ -52,12 +56,10 @@ if ( isDev ) {
     gulp.watch(srcPath+'styl/**/*', gulp.series('build:css'))
     gulp.watch(srcPath+'svg/**/*', gulp.series('build:icons', 'build:css', 'reload'))
     gulp.watch(srcPath+'img/**/*', gulp.series('build:img', 'reload'))
-    gulp.watch(srcPath+'js/**/*.js', gulp.series('build:js', 'reload'))
+    gulp.watch([srcPath+'js/**/*.js', srcPath+'vue/**/*.vue'], gulp.series('build:js', 'reload'))
     gulp.watch(srcPath+'php/**/*.php', gulp.series('build:php', 'reload'))
     gulp.watch(srcPath+'pug/**/*.pug', gulp.series('build:html', 'reload'))
-    gulp.watch(srcPath+'vendor/**/*', gulp.series('build:js', 'build:css', 'reload'))
     gulp.watch(srcPath+'static/**/*', gulp.series('build:static', 'reload'))
-
   })
 
   gulp.task('reload', function(done) { browserSync.reload(); done() })
@@ -107,10 +109,9 @@ gulp.task('build:static', function() {
 })
 
 gulp.task('build:js', function(){
-  return gulp.src([srcPath+'vendor/**/*.js', srcPath+'js/*.js'])
+  return gulp.src(srcPath+'js/*.js')
     .pipe( plumber() )
-    .pipe(concat('main.js'))
-    .pipe( isDev ? noop() : uglify() )
+    .pipe( rollup(rollupConfig) )
     .pipe( gulp.dest(dstPath+'js') )
 })
 
