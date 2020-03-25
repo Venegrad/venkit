@@ -9,13 +9,11 @@ html,body,figure,hr,blockquote
 
 
 .{framework_class_prefix}g
-  max-width 2000px
   width 100%
   margin-left auto
   margin-right auto
   min-height 100vh
   min-width 300px
-  overflow hidden
   box-sizing border-box
   *
     box-sizing border-box
@@ -42,6 +40,9 @@ pre
   width 100%
   code
     display block
+
+input[type=password]::-ms-reveal, input[type=password]::-ms-clear
+  display: none
 
 hr
   border 0
