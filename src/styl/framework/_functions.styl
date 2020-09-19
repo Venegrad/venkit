@@ -7,13 +7,35 @@ else
 font-url(file)
 	return '../fonts/' + file
 
-webfont(family, file, weight = normal, style = normal)
+webfont(family, file, weight = normal, style = normal, fms = 'woff')
 	@font-face
 		font-family family
 		font-display swap
-		src url(font-url(file + '.woff')) format('woff')				
+		src url(font-url(file + '.'+fms)) format(fms)				
 		font-weight weight
 		font-style style
+
+py(pd)
+	padding-top pd
+	padding-bottom pd
+
+px(pd)
+	padding-left pd
+	padding-right pd
+
+p(pd)
+	padding pd
+
+mx(md)
+	margin-left md
+	margin-right md
+
+my(md)
+	margin-top md
+	margin-bottom md
+
+m(md)
+	margin md
 
 
 wrap(width = wrapper, paddingd = wrap_padding)
