@@ -3,8 +3,8 @@
   "scripts": {
     "dev": "npm run watch",
     "watch": "cross-env NODE_ENV=development gulp",
-    "build": "cross-env NODE_ENV=production gulp",
-    "final": "cross-env NODE_ENV=production gulp build:final"
+    "tiny": "gulp tinypng",
+    "build": "cross-env NODE_ENV=production gulp"
   },
   "license": "ISC",
   "devDependencies": {
@@ -28,6 +28,7 @@
     "gulp-uglifyjs": "^0.6.2",
     "gulp-webp": "^4.0.1",
     "nib": "^1.1.2",
-    "pug": "^2.0.3"
+    "pug": "^2.0.3",
+    "gulp-tinypng-free": "^1.0.13"
   }
 }

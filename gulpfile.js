@@ -14,6 +14,7 @@ const cssnano = require("gulp-cssnano");
 const webp = require("gulp-webp");
 const uglify = require("gulp-uglifyjs");
 const tinypng = require("gulp-tinypng");
+const tinypngFree = require('gulp-tinypng-free');
 const svgo = require("gulp-svgo");
 const log = require("fancy-log");
 const isDev = process.env.NODE_ENV === "development";
@@ -58,9 +59,11 @@ if (isDev) {
     );
     gulp.watch(
       [
+        srcPath + "img/**/*.webp",
+        srcPath + "img/**/*.jpg",
+        srcPath + "img/**/*.png",
         srcPath + "img/**/*.gif",
         srcPath + "img/**/*.mp4",
-        srcPath + "img/**/*.webp",
       ],
       gulp.series("build:img", "reload")
     );
@@ -85,6 +88,8 @@ gulp.task("build:img", function () {
   return gulp
     .src([
       srcPath + "img/**/*.webp",
+      srcPath + "img/**/*.jpg",
+      srcPath + "img/**/*.png",
       srcPath + "img/**/*.gif",
       srcPath + "img/**/*.mp4",
     ])
@@ -107,8 +112,14 @@ gulp.task("build:webp", function () {
 
 gulp.task("tinypng", function () {
   return gulp
-    .src(srcPath + "img/**/*")
-    .pipe(tinypng(jsonSet.tinypngkey))
+    .src([srcPath + "img/**/*.jpg", srcPath + "img/**/*.png"])
+    .pipe(tinypng("Qeef9DZ7IRt3B-vtrOWCZBPqT8eN6ciE"))
+    .pipe(gulp.dest(srcPath + "img"));
+});
+
+gulp.task('tinypngfree', function (cb) {
+  return gulp.src([srcPath + "img/**/*.jpg", srcPath + "img/**/*.png"])
+    .pipe(tinypngFree({}))
     .pipe(gulp.dest(srcPath + "img"));
 });
 
@@ -145,7 +156,11 @@ gulp.task("build:css", function () {
         compress: false,
       })
     )
-    .pipe(isDev ? noop() : cssnano({ discardComments: { removeAll: true } }))
+    .pipe(isDev ? noop() : cssnano({
+      discardComments: {
+        removeAll: true
+      }
+    }))
     .pipe(gulp.dest(dstPath + "css"))
     .pipe(isDev ? browserSync.stream() : noop());
 });
@@ -190,7 +205,10 @@ gulp.task("build:icons", function () {
 });
 
 gulp.task("clean", function () {
-  return gulp.src(dstPath, { read: false, allowEmpty: true }).pipe(clean());
+  return gulp.src(dstPath, {
+    read: false,
+    allowEmpty: true
+  }).pipe(clean());
 });
 
 gulp.task(
@@ -199,6 +217,7 @@ gulp.task(
     "clean",
     "build:icons",
     "build:js",
+    "tinypngfree",
     "build:img",
     "build:webp",
     "build:svg",
@@ -209,8 +228,6 @@ gulp.task(
     "build:fonts"
   )
 );
-
-gulp.task("build:final", gulp.series("tinypng", "build"));
 
 // start
 defaultTask = ["clean", "build"];
