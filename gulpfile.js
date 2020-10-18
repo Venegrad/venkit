@@ -14,9 +14,11 @@ const cssnano = require("gulp-cssnano");
 const webp = require("gulp-webp");
 const uglify = require("gulp-uglifyjs");
 const tinypng = require("gulp-tinypng");
-const tinypngFree = require('gulp-tinypng-free');
+const tinypngFree = require("gulp-tinypng-free");
 const svgo = require("gulp-svgo");
 const log = require("fancy-log");
+const webpack = require("webpack");
+const webpackStream = require("webpack-stream");
 const isDev = process.env.NODE_ENV === "development";
 
 const srcPath = "./src/";
@@ -117,8 +119,9 @@ gulp.task("tinypng", function () {
     .pipe(gulp.dest(srcPath + "img"));
 });
 
-gulp.task('tinypngfree', function (cb) {
-  return gulp.src([srcPath + "img/**/*.jpg", srcPath + "img/**/*.png"])
+gulp.task("tinypngfree", function (cb) {
+  return gulp
+    .src([srcPath + "img/**/*.jpg", srcPath + "img/**/*.png"])
     .pipe(tinypngFree({}))
     .pipe(gulp.dest(srcPath + "img"));
 });
@@ -137,9 +140,39 @@ gulp.task("build:static", function () {
 
 gulp.task("build:js", function () {
   return gulp
-    .src([srcPath + "vendor/**/*.js", srcPath + "js/*.js"])
+    .src(srcPath + "js/main.js")
     .pipe(plumber())
-    .pipe(concat("main.js"))
+    .pipe(
+      webpackStream({
+        devtool: isDev ? "eval-source-map" : "none",
+        mode: isDev ? "development" : "production",
+        output: {
+          filename: "main.js",
+        },
+        module: {
+          rules: [
+            {
+              test: /\.(js)$/,
+              exclude: /(node_modules)/,
+              loader: "babel-loader",
+              query: {
+                presets: ["@babel/env"],
+              },
+            },
+          ],
+        },
+        plugins: [
+          new webpack.ProvidePlugin({
+            $: "jquery",
+            jQuery: "jquery",
+            "window.jQuery": "jquery",
+          }),
+        ],
+        // externals: {
+        //   jquery: "$",
+        // },
+      })
+    )
     .pipe(isDev ? noop() : uglify())
     .pipe(gulp.dest(dstPath + "js"));
 });
@@ -156,11 +189,15 @@ gulp.task("build:css", function () {
         compress: false,
       })
     )
-    .pipe(isDev ? noop() : cssnano({
-      discardComments: {
-        removeAll: true
-      }
-    }))
+    .pipe(
+      isDev
+        ? noop()
+        : cssnano({
+            discardComments: {
+              removeAll: true,
+            },
+          })
+    )
     .pipe(gulp.dest(dstPath + "css"))
     .pipe(isDev ? browserSync.stream() : noop());
 });
@@ -205,10 +242,12 @@ gulp.task("build:icons", function () {
 });
 
 gulp.task("clean", function () {
-  return gulp.src(dstPath, {
-    read: false,
-    allowEmpty: true
-  }).pipe(clean());
+  return gulp
+    .src(dstPath, {
+      read: false,
+      allowEmpty: true,
+    })
+    .pipe(clean());
 });
 
 gulp.task(
