@@ -1,6 +1,12 @@
+import $ from "jquery";
+
 class optResize {
   constructor() {
     this.throttle("resize", "optimizedResize");
+    (function () {
+      console.log(222);
+      $("body").addClass("valera");
+    });
   }
 
   throttle(type, name, obj) {

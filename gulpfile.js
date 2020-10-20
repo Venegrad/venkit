@@ -16,9 +16,11 @@ const uglify = require("gulp-uglifyjs");
 const tinypng = require("gulp-tinypng");
 const tinypngFree = require("gulp-tinypng-free");
 const svgo = require("gulp-svgo");
-const log = require("fancy-log");
 const webpack = require("webpack");
 const webpackStream = require("webpack-stream");
+const webpackConfig = require("./webpack.config");
+const babel = require("gulp-babel");
+
 const isDev = process.env.NODE_ENV === "development";
 
 const srcPath = "./src/";
@@ -142,37 +144,11 @@ gulp.task("build:js", function () {
   return gulp
     .src(srcPath + "js/main.js")
     .pipe(plumber())
-    .pipe(
-      webpackStream({
-        devtool: isDev ? "eval-source-map" : "none",
-        mode: isDev ? "development" : "production",
-        output: {
-          filename: "main.js",
-        },
-        module: {
-          rules: [
-            {
-              test: /\.(js)$/,
-              exclude: /(node_modules)/,
-              loader: "babel-loader",
-              query: {
-                presets: ["@babel/env"],
-              },
-            },
-          ],
-        },
-        plugins: [
-          new webpack.ProvidePlugin({
-            $: "jquery",
-            jQuery: "jquery",
-            "window.jQuery": "jquery",
-          }),
-        ],
-        // externals: {
-        //   jquery: "$",
-        // },
-      })
-    )
+    .pipe(webpackStream(webpackConfig, webpack))
+    .on("error", function handleError() {
+      this.emit("end"); // Recover from errors
+    })
+    .pipe(babel())
     .pipe(isDev ? noop() : uglify())
     .pipe(gulp.dest(dstPath + "js"));
 });
