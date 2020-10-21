@@ -1,16 +1,22 @@
-import { header } from "./modules/header";
-import { optResize } from "./modules/optimizedResize";
-import { tos } from "./modules/tos";
+import Swiper, { Navigation, Pagination } from "swiper";
 
-// import jquery from "jquery";
-// window.jQuery = jquery;
-// window.$ = jquery;
+var mySwiper = new Swiper(".swiper-container", {
+  // Optional parameters
+  loop: true,
 
-let rv = new optResize();
-let v = new header();
-let s = new tos();
+  // If we need pagination
+  pagination: {
+    el: ".swiper-pagination",
+  },
 
-// handle event
-window.addEventListener("optimizedResize", function () {
-  console.log("Resource conscious resize callback!");
+  // Navigation arrows
+  navigation: {
+    nextEl: ".swiper-button-next",
+    prevEl: ".swiper-button-prev",
+  },
+
+  // And if we need scrollbar
+  scrollbar: {
+    el: ".swiper-scrollbar",
+  },
 });
