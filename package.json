@@ -2,7 +2,7 @@
   "name": "venegrad.com",
   "scripts": {
     "dev": "npm run watch",
-    "watch": "cross-env NODE_ENV=development webpack --mode development --watch",
+    "watch": "cross-env NODE_ENV=development webpack serve --mode development --watch",
     "build": "cross-env NODE_ENV=production webpack --mode production"
   },
   "private": true,
@@ -21,7 +21,8 @@
     "style-loader": "^2.0.0",
     "stylus-loader": "^4.1.1",
     "webpack": "^5.1.2",
-    "webpack-cli": "^4.0.0"
+    "webpack-cli": "^4.0.0",
+    "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
     "jquery": "^3.5.1",

@@ -30,9 +30,9 @@ module.exports = {
   devtool: isDev ? "eval-source-map" : false,
   mode: isDev ? "development" : "production",
   devServer: {
-    port: 3001,
-    hot: isDev,
-    overlay: true,
+    contentBase: path.join(__dirname, "dist"),
+    compress: true,
+    port: 9000,
   },
   entry: {
     main: [
