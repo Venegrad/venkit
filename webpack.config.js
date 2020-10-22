@@ -7,7 +7,10 @@ const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const fs = require("fs");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+
+// Global options
 const isDev = process.env.NODE_ENV === "development";
+const isHash = !isDev ? ".[hash]" : "";
 
 // Framework Options
 const stylusOptions = {
@@ -66,7 +69,7 @@ module.exports = {
   },
   optimization: optimization(),
   output: {
-    filename: "js/[name].[hash].js",
+    filename: "js/[name]" + isHash + ".js",
     path: path.resolve(__dirname, "dist"),
   },
   resolve: {
@@ -79,6 +82,13 @@ module.exports = {
     rules: [
       {
         test: /\.(js)$/,
+        exclude: /node_modules/,
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: ["@babel/preset-env"],
+          },
+        },
       },
       {
         test: /\.pug$/,
@@ -126,7 +136,7 @@ module.exports = {
     }),
 
     new MiniCssExtractPlugin({
-      filename: "./css/[name].[hash].css",
+      filename: "./css/[name]" + isHash + ".css",
     }),
 
     new CopyPlugin({

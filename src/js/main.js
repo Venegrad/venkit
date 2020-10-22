@@ -1,24 +1,14 @@
-import Swiper, { Navigation, Pagination } from "swiper";
+class demoClass {
+  constructor(parmetres) {
+    console.log("class created");
+  }
 
-var mySwiper = new Swiper(".swiper-container", {
-  // Optional parameters
-  loop: true,
+  method_1() {
+    console.log("valera what is your name?");
+  }
+}
 
-  // If we need pagination
-  pagination: {
-    el: ".swiper-pagination",
-  },
+let test = new demoClass();
+// will run the class
 
-  // Navigation arrows
-  navigation: {
-    nextEl: ".swiper-button-next",
-    prevEl: ".swiper-button-prev",
-  },
-
-  // And if we need scrollbar
-  scrollbar: {
-    el: ".swiper-scrollbar",
-  },
-});
-
-console.log(mySwiper);
+console.log(test); // Will return object of class

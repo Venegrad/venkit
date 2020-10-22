@@ -5,11 +5,13 @@
     "watch": "cross-env NODE_ENV=development webpack serve --mode development --watch",
     "build": "cross-env NODE_ENV=production webpack --mode production"
   },
+  "browserslist": "> 0.25%, not dead",
   "private": true,
   "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.12.3",
     "@babel/preset-env": "^7.12.1",
+    "babel-loader": "^8.1.0",
     "clean-webpack-plugin": "^3.0.0",
     "copy-webpack-plugin": "^6.2.1",
     "cross-env": "^5.2.1",
