@@ -55,14 +55,16 @@ const PAGES = fs
 module.exports = {
   devtool: isDev ? "eval-source-map" : false,
   mode: isDev ? "development" : "production",
+  target: "web",
   devServer: {
     contentBase: path.join(__dirname, "dist"),
-    compress: true,
     port: 9000,
+    open: true,
     hot: isDev,
   },
   entry: {
     main: [
+      "@babel/polyfill",
       "./src/js/main.js",
       path.resolve(__dirname, "src/styl/framework/main.styl"),
     ],
