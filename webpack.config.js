@@ -2,29 +2,52 @@ const webpack = require("webpack");
 const path = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const CopyPlugin = require("copy-webpack-plugin");
+const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
 const fs = require("fs");
-
-const PATHS = {
-  src: path.join(__dirname, "src"),
-  dist: path.join(__dirname, "dist"),
-  assets: "pug/",
-};
-
-const PAGES_DIR = `${PATHS.src}/${PATHS.assets}`;
-const PAGES = fs
-  .readdirSync(PAGES_DIR)
-  .filter((fileName) => fileName.endsWith(".pug"));
-
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const isDev = process.env.NODE_ENV === "development";
 
+// Framework Options
 const stylusOptions = {
   use: ["nib"],
   import: ["nib"],
   includeCSS: true,
   resolveURL: true,
   hoistAtrules: true,
-  compress: true,
+  compress: !isDev,
+  hmr: true,
 };
+
+// Start Webpack
+
+const optimization = function () {
+  const config = {};
+  if (!isDev) {
+    config.minimizer = [
+      new OptimizeCssAssetsPlugin({
+        cssProcessor: require("cssnano"),
+        cssProcessorPluginOptions: {
+          preset: ["default", { discardComments: { removeAll: true } }],
+        },
+        canPrint: true,
+      }),
+      new TerserPlugin(),
+    ];
+  }
+  return config;
+};
+
+const PATHS = {
+  src: path.join(__dirname, "src"),
+  dist: path.join(__dirname, "dist"),
+};
+
+const PAGES_DIR = `${PATHS.src}/pug/`;
+const PAGES = fs
+  .readdirSync(PAGES_DIR)
+  .filter((fileName) => fileName.endsWith(".pug"));
 
 module.exports = {
   devtool: isDev ? "eval-source-map" : false,
@@ -33,6 +56,7 @@ module.exports = {
     contentBase: path.join(__dirname, "dist"),
     compress: true,
     port: 9000,
+    hot: isDev,
   },
   entry: {
     main: [
@@ -40,8 +64,10 @@ module.exports = {
       path.resolve(__dirname, "src/styl/framework/main.styl"),
     ],
   },
+  optimization: optimization(),
   output: {
-    filename: "js/[name].js",
+    filename: "js/[name].[hash].js",
+    path: path.resolve(__dirname, "dist"),
   },
   resolve: {
     alias: {
@@ -73,8 +99,15 @@ module.exports = {
         use: [
           {
             loader: MiniCssExtractPlugin.loader,
+            options: {
+              hmr: true,
+              reloadAll: true,
+            },
           },
-          "css-loader",
+          {
+            loader: "css-loader",
+          },
+
           {
             loader: "stylus-loader",
             options: {
@@ -93,8 +126,11 @@ module.exports = {
     }),
 
     new MiniCssExtractPlugin({
-      filename: "./css/[name].css",
-      chunkFilename: "./css/[id].css",
+      filename: "./css/[name].[hash].css",
+    }),
+
+    new CopyPlugin({
+      patterns: [{ from: `${PATHS.src}/fonts`, to: `${PATHS.dist}/fonts` }],
     }),
 
     ...PAGES.map(
@@ -102,7 +138,15 @@ module.exports = {
         new HtmlWebpackPlugin({
           template: `${PAGES_DIR}/${page}`,
           filename: `./${page.replace(/\.pug/, ".html")}`,
+          cache: false,
+          minify: {
+            collapseWhitespace: !isDev,
+          },
         })
     ),
+
+    new CleanWebpackPlugin({
+      cleanOnceBeforeBuildPatterns: "./dist/*",
+    }),
   ],
 };

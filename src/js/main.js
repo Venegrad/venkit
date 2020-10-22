@@ -20,3 +20,5 @@ var mySwiper = new Swiper(".swiper-container", {
     el: ".swiper-scrollbar",
   },
 });
+
+console.log(mySwiper);
