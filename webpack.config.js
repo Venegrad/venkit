@@ -62,7 +62,6 @@ module.exports = {
     contentBase: path.join(__dirname, "dist"),
     port: 9000,
     open: true,
-    hot: isDev,
   },
   entry: {
     main: [
@@ -109,6 +108,10 @@ module.exports = {
         ],
       },
       {
+        test: /\.(svg|woff2)$/,
+        use: "file-loader",
+      },
+      {
         test: /\.styl/,
         use: [
           {
@@ -120,6 +123,7 @@ module.exports = {
           },
           {
             loader: "css-loader",
+            options: { url: false },
           },
 
           {
