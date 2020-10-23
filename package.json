@@ -23,9 +23,12 @@
     "optimize-css-assets-webpack-plugin": "^5.0.4",
     "pug": "^2.0.3",
     "pug-html-loader": "^1.1.5",
+    "remove-files-webpack-plugin": "^1.4.4",
     "style-loader": "^2.0.0",
     "stylus-loader": "^4.1.1",
     "terser-webpack-plugin": "^5.0.0",
+    "url-loader": "^4.1.1",
+    "webfont-webpack-plugin": "^1.0.0",
     "webpack": "^5.1.2",
     "webpack-cli": "^4.0.0",
     "webpack-dev-server": "^3.11.0"

@@ -7,6 +7,8 @@ const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const fs = require("fs");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const WebfontPlugin = require("webfont-webpack-plugin").default;
+const RemovePlugin = require("remove-files-webpack-plugin");
 
 // Global options
 const isDev = process.env.NODE_ENV === "development";
@@ -53,7 +55,7 @@ const PAGES = fs
   .filter((fileName) => fileName.endsWith(".pug"));
 
 module.exports = {
-  devtool: isDev ? "eval-source-map" : false,
+  devtool: isDev ? "inline-source-map" : false,
   mode: isDev ? "development" : "production",
   target: "web",
   devServer: {
@@ -157,8 +159,24 @@ module.exports = {
         })
     ),
 
-    new CleanWebpackPlugin({
-      cleanOnceBeforeBuildPatterns: "./dist/*",
+    new WebfontPlugin({
+      files: path.resolve(__dirname, "src/svg**/*.svg"),
+      fontName: "i",
+      formats: ["woff2"],
+      template: path.resolve(__dirname, "src/svg/template/icons.styl"),
+      dest: path.resolve(__dirname, "../fonts/"),
+      destTemplate: path.resolve(__dirname, "src/styl/framework"),
+    }),
+
+    new RemovePlugin({
+      before: {
+        test: [
+          {
+            folder: "./dist",
+            method: () => true,
+          },
+        ],
+      },
     }),
   ],
 };
