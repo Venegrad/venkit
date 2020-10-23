@@ -164,7 +164,7 @@ module.exports = {
       fontName: "i",
       formats: ["woff2"],
       template: path.resolve(__dirname, "src/svg/template/icons.styl"),
-      dest: path.resolve(__dirname, "../fonts/"),
+      dest: path.resolve(__dirname, "src/fonts/"),
       destTemplate: path.resolve(__dirname, "src/styl/framework"),
     }),
 
