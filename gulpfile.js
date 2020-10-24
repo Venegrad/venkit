@@ -253,7 +253,7 @@ gulp.task("build:icons", function () {
       iconfont({
         fontName: "icons",
         prependUnicode: false,
-        formats: ["ttf", "eot", "woff"],
+        formats: ["woff2"],
         normalize: true,
         fontHeight: 1000,
         timestamp: Math.round(Date.now() / 1000),
