@@ -1,17 +1,10 @@
-import { header } from "./modules/header";
-import { optResize } from "./modules/optimizedResize";
-import { tos } from "./modules/tos";
-import $ from "jquery";
+// import { header } from "./modules/header";
+// import { optResize } from "./modules/optimizedResize";
+// import $ from "jquery";
 
-let rv = new optResize();
-let v = new header();
-let s = new tos();
+// let rv = new optResize();
+// let v = new header();
 
-// handle event
-let c = window.addEventListener("optimizedResize", function () {
-  console.log("Resource conscious resize callback!");
-});
-
-$(document).ready(function () {
-  alert(1);
-});
+// let c = window.addEventListener("optimizedResize", function () {
+//   console.log("Resource conscious resize callback!");
+// });

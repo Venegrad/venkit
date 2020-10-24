@@ -18,12 +18,13 @@ const gutil = require("gulp-util");
 const notifier = require("node-notifier");
 const TerserPlugin = require("terser-webpack-plugin");
 const path = require("path");
+
+const isDev = process.env.NODE_ENV === "development";
+
 const statsLog = {
   colors: true,
   reasons: true,
 };
-
-const isDev = process.env.NODE_ENV === "development";
 
 const optimization = function () {
   const config = {
@@ -41,7 +42,7 @@ const optimization = function () {
 const webpackConfig = {
   devtool: isDev ? "eval-source-map" : false,
   mode: isDev ? "development" : "production",
-  target: "web",
+  target: isDev ? "web" : "browserslist",
   entry: {
     main: ["@babel/polyfill", "./src/js/main.js"],
   },
@@ -77,21 +78,6 @@ const webpackConfig = {
 
 const srcPath = "./src/";
 const dstPath = "./dist/";
-
-const jsonSettings = "C:/Users/Venegrad/OneDrive/Work-cloud/settings.json";
-let checkJson = 1;
-let jsonSet = 0;
-
-try {
-  let fileJson = require(jsonSettings);
-} catch (error) {
-  console.log("file with ftp setting is empty or not exist");
-  checkJson = 0;
-}
-
-if (checkJson == 1) {
-  jsonSet = require(jsonSettings);
-}
 
 if (isDev) {
   gulp.task("serve", function () {
@@ -163,7 +149,7 @@ gulp.task("build:webp", function () {
   return gulp
     .src([srcPath + "img/**/*.jpg", srcPath + "img/**/*.png"])
     .pipe(webp())
-    .pipe(gulp.dest(dstPath + "img"));
+    .pipe(gulp.dest(dstPath + "img/webp"));
 });
 
 gulp.task("tinypng", function () {
