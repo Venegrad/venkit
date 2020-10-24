@@ -9,33 +9,75 @@ const pug = require("gulp-pug");
 const prettyHtml = require("gulp-pretty-html");
 const iconfont = require("gulp-iconfont");
 const consolidate = require("gulp-consolidate");
-const concat = require("gulp-concat");
 const cssnano = require("gulp-cssnano");
 const webp = require("gulp-webp");
-const uglify = require("gulp-uglifyjs");
-const tinypng = require("gulp-tinypng");
-const tinypngFree = require('gulp-tinypng-free');
+const tinypngFree = require("gulp-tinypng-free");
 const svgo = require("gulp-svgo");
-const log = require("fancy-log");
+const webpack = require("webpack");
+const gutil = require("gulp-util");
+const notifier = require("node-notifier");
+const TerserPlugin = require("terser-webpack-plugin");
+const path = require("path");
+
 const isDev = process.env.NODE_ENV === "development";
+
+const statsLog = {
+  colors: true,
+  reasons: true,
+};
+
+const optimization = function () {
+  const config = {
+    splitChunks: {
+      chunks: "all",
+      name: "vendor",
+    },
+  };
+  if (!isDev) {
+    config.minimizer = [new TerserPlugin()];
+  }
+  return config;
+};
+
+const webpackConfig = {
+  devtool: isDev ? "eval-source-map" : false,
+  mode: isDev ? "development" : "production",
+  target: isDev ? "web" : "browserslist",
+  entry: {
+    main: ["@babel/polyfill", "./src/js/main.js"],
+  },
+  performance: {
+    hints: false,
+  },
+  output: {
+    filename: "[name].js",
+    path: path.resolve(__dirname, "dist/js"),
+  },
+  optimization: optimization(),
+  module: {
+    rules: [
+      {
+        test: /\.(js)$/,
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: ["@babel/preset-env"],
+          },
+        },
+      },
+    ],
+  },
+  plugins: [
+    new webpack.ProvidePlugin({
+      $: "jquery",
+      jQuery: "jquery",
+      "window.jQuery": "jquery",
+    }),
+  ],
+};
 
 const srcPath = "./src/";
 const dstPath = "./dist/";
-
-const jsonSettings = "C:/Users/Venegrad/OneDrive/Work-cloud/settings.json";
-let checkJson = 1;
-let jsonSet = 0;
-
-try {
-  let fileJson = require(jsonSettings);
-} catch (error) {
-  console.log("file with ftp setting is empty or not exist");
-  checkJson = 0;
-}
-
-if (checkJson == 1) {
-  jsonSet = require(jsonSettings);
-}
 
 if (isDev) {
   gulp.task("serve", function () {
@@ -107,7 +149,7 @@ gulp.task("build:webp", function () {
   return gulp
     .src([srcPath + "img/**/*.jpg", srcPath + "img/**/*.png"])
     .pipe(webp())
-    .pipe(gulp.dest(dstPath + "img"));
+    .pipe(gulp.dest(dstPath + "img/webp"));
 });
 
 gulp.task("tinypng", function () {
@@ -117,8 +159,9 @@ gulp.task("tinypng", function () {
     .pipe(gulp.dest(srcPath + "img"));
 });
 
-gulp.task('tinypngfree', function (cb) {
-  return gulp.src([srcPath + "img/**/*.jpg", srcPath + "img/**/*.png"])
+gulp.task("tinypngfree", function (cb) {
+  return gulp
+    .src([srcPath + "img/**/*.jpg", srcPath + "img/**/*.png"])
     .pipe(tinypngFree({}))
     .pipe(gulp.dest(srcPath + "img"));
 });
@@ -135,13 +178,33 @@ gulp.task("build:static", function () {
   return gulp.src(srcPath + "static/**/*").pipe(gulp.dest(dstPath + "static"));
 });
 
-gulp.task("build:js", function () {
-  return gulp
-    .src([srcPath + "vendor/**/*.js", srcPath + "js/*.js"])
-    .pipe(plumber())
-    .pipe(concat("main.js"))
-    .pipe(isDev ? noop() : uglify())
-    .pipe(gulp.dest(dstPath + "js"));
+gulp.task("build:js", function (done) {
+  // run webpack
+  webpack(webpackConfig, onComplete);
+  function onComplete(error, stats) {
+    if (error) {
+      // кажется еще не сталкивался с этой ошибкой
+      onError(error);
+    } else if (stats.hasErrors()) {
+      // ошибки в самой сборке, к примеру "не удалось найти модуль по заданному пути"
+      onError(stats.toString(statsLog));
+    } else {
+      onSuccess(stats.toString(statsLog));
+    }
+  }
+  function onError(error) {
+    let formatedError = new gutil.PluginError("webpack", error);
+    notifier.notify({
+      // чисто чтобы сразу узнать об ошибке
+      title: `Error: ${formatedError.plugin}`,
+      message: formatedError.message,
+    });
+    done(formatedError);
+  }
+  function onSuccess(detailInfo) {
+    gutil.log("[webpack]", detailInfo);
+    done();
+  }
 });
 
 gulp.task("build:css", function () {
@@ -153,14 +216,18 @@ gulp.task("build:css", function () {
         use: nib(),
         "include css": true,
         import: ["nib"],
-        compress: false,
+        compress: !isDev,
       })
     )
-    .pipe(isDev ? noop() : cssnano({
-      discardComments: {
-        removeAll: true
-      }
-    }))
+    .pipe(
+      isDev
+        ? noop()
+        : cssnano({
+            discardComments: {
+              removeAll: true,
+            },
+          })
+    )
     .pipe(gulp.dest(dstPath + "css"))
     .pipe(isDev ? browserSync.stream() : noop());
 });
@@ -205,10 +272,12 @@ gulp.task("build:icons", function () {
 });
 
 gulp.task("clean", function () {
-  return gulp.src(dstPath, {
-    read: false,
-    allowEmpty: true
-  }).pipe(clean());
+  return gulp
+    .src(dstPath, {
+      read: false,
+      allowEmpty: true,
+    })
+    .pipe(clean());
 });
 
 gulp.task(
