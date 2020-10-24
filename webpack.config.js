@@ -63,7 +63,7 @@ const PAGES = fs
 module.exports = {
   devtool: isDev ? "inline-source-map" : false,
   mode: isDev ? "development" : "production",
-  target: "web",
+  target: isDev ? "web" : "browserslist",
   performance: {
     hints: false,
   },
