@@ -118,7 +118,7 @@ module.exports = {
         ],
       },
       {
-        test: /\.(svg|woff2)$/,
+        test: /\.(woff2)$/,
         use: "file-loader",
       },
       {
