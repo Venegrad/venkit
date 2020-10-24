@@ -9,6 +9,7 @@ const fs = require("fs");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const WebfontPlugin = require("webfont-webpack-plugin").default;
 const RemovePlugin = require("remove-files-webpack-plugin");
+const TinyimgPlugin = require("tinyimg-webpack-plugin");
 
 // Global options
 const isDev = process.env.NODE_ENV === "development";
@@ -28,7 +29,12 @@ const stylusOptions = {
 // Start Webpack
 
 const optimization = function () {
-  const config = {};
+  const config = {
+    splitChunks: {
+      chunks: "all",
+      name: "vendor",
+    },
+  };
   if (!isDev) {
     config.minimizer = [
       new OptimizeCssAssetsPlugin({
@@ -58,6 +64,9 @@ module.exports = {
   devtool: isDev ? "inline-source-map" : false,
   mode: isDev ? "development" : "production",
   target: "web",
+  performance: {
+    hints: false,
+  },
   devServer: {
     contentBase: path.join(__dirname, "dist"),
     port: 9000,
@@ -72,6 +81,7 @@ module.exports = {
   },
   optimization: optimization(),
   output: {
+    chunkFilename: "js/vendor.js",
     filename: "js/[name]" + isHash + ".js",
     path: path.resolve(__dirname, "dist"),
   },
@@ -150,7 +160,7 @@ module.exports = {
     new CopyPlugin({
       patterns: [
         { from: `${PATHS.src}/fonts`, to: `${PATHS.dist}/fonts` },
-        { from: `${PATHS.src}/img`, to: `${PATHS.dist}/img` },
+        { from: `${PATHS.src}/img/`, to: `${PATHS.dist}/img/` },
       ],
     }),
 
@@ -173,6 +183,11 @@ module.exports = {
       template: path.resolve(__dirname, "src/svg/template/icons.styl"),
       dest: path.resolve(__dirname, "src/fonts/"),
       destTemplate: path.resolve(__dirname, "src/styl/framework"),
+    }),
+
+    new TinyimgPlugin({
+      enabled: process.env.NODE_ENV === "production",
+      logged: true,
     }),
 
     new RemovePlugin({
