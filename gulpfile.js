@@ -118,10 +118,6 @@ if (isDev) {
     gulp.watch(srcPath + "js/**/*.js", gulp.series("build:js", "reload"));
     gulp.watch(srcPath + "php/**/*.php", gulp.series("build:php", "reload"));
     gulp.watch(srcPath + "pug/**/*.pug", gulp.series("build:html", "reload"));
-    gulp.watch(
-      srcPath + "vendor/**/*",
-      gulp.series("build:js", "build:css", "reload")
-    );
     gulp.watch(srcPath + "static/**/*", gulp.series("build:static", "reload"));
   });
 
