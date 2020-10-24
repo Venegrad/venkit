@@ -9,19 +9,71 @@ const pug = require("gulp-pug");
 const prettyHtml = require("gulp-pretty-html");
 const iconfont = require("gulp-iconfont");
 const consolidate = require("gulp-consolidate");
-const concat = require("gulp-concat");
 const cssnano = require("gulp-cssnano");
 const webp = require("gulp-webp");
-const uglify = require("gulp-uglifyjs");
-const tinypng = require("gulp-tinypng");
 const tinypngFree = require("gulp-tinypng-free");
 const svgo = require("gulp-svgo");
 const webpack = require("webpack");
-const webpackStream = require("webpack-stream");
-const webpackConfig = require("./webpack.config");
-const babel = require("gulp-babel");
+const gutil = require("gulp-util");
+const notifier = require("node-notifier");
+const TerserPlugin = require("terser-webpack-plugin");
+const path = require("path");
+const statsLog = {
+  colors: true,
+  reasons: true,
+};
 
 const isDev = process.env.NODE_ENV === "development";
+
+const optimization = function () {
+  const config = {
+    splitChunks: {
+      chunks: "all",
+      name: "vendor",
+    },
+  };
+  if (!isDev) {
+    config.minimizer = [new TerserPlugin()];
+  }
+  return config;
+};
+
+const webpackConfig = {
+  devtool: isDev ? "eval-source-map" : false,
+  mode: isDev ? "development" : "production",
+  target: "web",
+  entry: {
+    main: ["@babel/polyfill", "./src/js/main.js"],
+  },
+  performance: {
+    hints: false,
+  },
+  output: {
+    filename: "[name].js",
+    path: path.resolve(__dirname, "dist/js"),
+  },
+  optimization: optimization(),
+  module: {
+    rules: [
+      {
+        test: /\.(js)$/,
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: ["@babel/preset-env"],
+          },
+        },
+      },
+    ],
+  },
+  plugins: [
+    new webpack.ProvidePlugin({
+      $: "jquery",
+      jQuery: "jquery",
+      "window.jQuery": "jquery",
+    }),
+  ],
+};
 
 const srcPath = "./src/";
 const dstPath = "./dist/";
@@ -140,17 +192,33 @@ gulp.task("build:static", function () {
   return gulp.src(srcPath + "static/**/*").pipe(gulp.dest(dstPath + "static"));
 });
 
-gulp.task("build:js", function () {
-  return gulp
-    .src(srcPath + "js/main.js")
-    .pipe(plumber())
-    .pipe(webpackStream(webpackConfig, webpack))
-    .on("error", function handleError() {
-      this.emit("end"); // Recover from errors
-    })
-    .pipe(babel())
-    .pipe(isDev ? noop() : uglify())
-    .pipe(gulp.dest(dstPath + "js"));
+gulp.task("build:js", function (done) {
+  // run webpack
+  webpack(webpackConfig, onComplete);
+  function onComplete(error, stats) {
+    if (error) {
+      // кажется еще не сталкивался с этой ошибкой
+      onError(error);
+    } else if (stats.hasErrors()) {
+      // ошибки в самой сборке, к примеру "не удалось найти модуль по заданному пути"
+      onError(stats.toString(statsLog));
+    } else {
+      onSuccess(stats.toString(statsLog));
+    }
+  }
+  function onError(error) {
+    let formatedError = new gutil.PluginError("webpack", error);
+    notifier.notify({
+      // чисто чтобы сразу узнать об ошибке
+      title: `Error: ${formatedError.plugin}`,
+      message: formatedError.message,
+    });
+    done(formatedError);
+  }
+  function onSuccess(detailInfo) {
+    gutil.log("[webpack]", detailInfo);
+    done();
+  }
 });
 
 gulp.task("build:css", function () {
@@ -162,7 +230,7 @@ gulp.task("build:css", function () {
         use: nib(),
         "include css": true,
         import: ["nib"],
-        compress: false,
+        compress: !isDev,
       })
     )
     .pipe(
