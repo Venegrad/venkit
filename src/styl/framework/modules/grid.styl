@@ -1,4 +1,4 @@
-if grid_frames is defined && grid_frames
+if grid_cols is defined && grid_cols
 
     if grid_order is defined && grid_order
         for irn in 1..grid_order
@@ -7,31 +7,31 @@ if grid_frames is defined && grid_frames
                 
     .{framework_class_prefix}grid
         fl(w)
-        if (grid_default_gap is defined && grid_default_gap)
-            margin-left: "%s%s" % (-(grid_gap / 2) grid_px)
-            margin-right: "%s%s" % (-(grid_gap / 2) grid_px)
-            width: "calc(100% + %s%s)" % (grid_gap grid_px)
+        if (grid_default_gap is defined && grid_default_gap) 
+            margin-left: "%s%s" % (-(grid_gap[0] / 2) grid_gap[1])
+            margin-right: "%s%s" % (-(grid_gap[0] / 2) grid_gap[1])
+            width: "calc(100% + %s%s)" % (grid_gap[0] grid_gap[1])
             & > [class^=\"{framework_class_prefix}cell\"]
-                padding-left: "%s%s" % ((grid_gap / 2) grid_px)
-                padding-right: "%s%s" % ((grid_gap / 2) grid_px)
-                margin-bottom: "%s%s" % (grid_gap grid_px)
+                padding-left: "%s%s" % ((grid_gap[0] / 2) grid_gap[1])
+                padding-right: "%s%s" % ((grid_gap[0] / 2) grid_gap[1])
+                margin-bottom: "%s%s" % (grid_gap[0] grid_gap[1])
         else
             width 100%
         &-gap
-            margin-left: "%s%s" % (-(grid_gap / 2) grid_px)
-            margin-right: "%s%s" % (-(grid_gap / 2) grid_px)
-            width: "calc(100% + %s%s)" % (grid_gap grid_px)
+            margin-left: "%s%s" % (-(grid_gap[0] / 2) grid_gap[1])
+            margin-right: "%s%s" % (-(grid_gap[0] / 2) grid_gap[1])
+            width: "calc(100% + %s%s)" % (grid_gap[0] grid_gap[1])
             & > [class^=\"{framework_class_prefix}cell\"]
-                padding-left: "%s%s" % ((grid_gap / 2) grid_px)
-                padding-right: "%s%s" % ((grid_gap / 2) grid_px)
-                margin-bottom: "%s%s" % (grid_gap grid_px)
+                padding-left: "%s%s" % ((grid_gap[0] / 2) grid_gap[1])
+                padding-right: "%s%s" % ((grid_gap[0] / 2) grid_gap[1])
+                margin-bottom: "%s%s" % (grid_gap[0] grid_gap[1])
             &-x
-                margin-left: "%s%s" % (-(grid_gap / 2) grid_px)
-                margin-right: "%s%s" % (-(grid_gap / 2) grid_px)
-                width: "calc(100% + %s%s)" % (grid_gap grid_px)
+                margin-left: "%s%s" % (-(grid_gap[0] / 2) grid_gap[1])
+                margin-right: "%s%s" % (-(grid_gap[0] / 2) grid_gap[1])
+                width: "calc(100% + %s%s)" % (grid_gap[0] grid_gap[1])
                 & > [class^=\"{framework_class_prefix}cell\"]
-                    padding-left: "%s%s" % ((grid_gap / 2) grid_px)
-                    padding-right: "%s%s" % ((grid_gap / 2) grid_px)
+                    padding-left: "%s%s" % ((grid_gap[0] / 2) grid_gap[1])
+                    padding-right: "%s%s" % ((grid_gap[0] / 2) grid_gap[1])
                     if grid_default_gap is defined && grid_default_gap
                         margin-bottom 0
             &-y
@@ -39,7 +39,7 @@ if grid_frames is defined && grid_frames
                 margin-right 0
                 width 100%
                 & > [class^=\"{framework_class_prefix}cell\"]
-                    margin-bottom: "%s%s" % (grid_gap grid_px)
+                    margin-bottom: "%s%s" % (grid_gap[0] grid_gap[1])
                     if grid_default_gap is defined && grid_default_gap
                         padding-left 0
                         padding-right 0
@@ -51,7 +51,7 @@ if grid_frames is defined && grid_frames
                 padding 0
                 margin-bottom 0
         &-ungap
-            margin-bottom "%s%s" % (-(grid_gap) grid_px)
+            margin-bottom "%s%s" % (-(grid_gap[0]) grid_gap[1])
         .{framework_class_prefix}cell
             width 100%
             &[style^="width"]
@@ -65,8 +65,8 @@ if grid_frames is defined && grid_frames
             &-inline
                 width auto
             
-        for firstvalue in grid_frames
-            for secondvalue in grid_frames
+        for firstvalue in grid_cols
+            for secondvalue in grid_cols
 
                 if(firstvalue != secondvalue && firstvalue <= secondvalue)
                     .{framework_class_prefix}cell-{firstvalue}-{secondvalue}
@@ -134,9 +134,9 @@ if grid_frames is defined && grid_frames
             
 
 
-    if grid_bpoint is defined && grid_bpoint
+    if breakpoints is defined && breakpoints
         
-        for index, key in grid_bpoint
+        for index, key in breakpoints
             @media(max-width (key)px)
 
                 if grid_order is defined && grid_order
@@ -158,8 +158,8 @@ if grid_frames is defined && grid_frames
                             flex-shrink 0
                         &-inline--{index}{grid_default_class}
                             width auto
-                    for firstvalue in grid_frames
-                        for secondvalue in grid_frames
+                    for firstvalue in grid_cols
+                        for secondvalue in grid_cols
                             if(firstvalue != secondvalue && firstvalue <= secondvalue)
                                 .{framework_class_prefix}cell-{firstvalue}-{secondvalue}--{index}{grid_default_class}
                                     width: (firstvalue / secondvalue * 100)%
@@ -218,7 +218,7 @@ if grid_frames is defined && grid_frames
         
         
 
-        for index, key in invert_hash(grid_bpoint)
+        for index, key in invert_hash(breakpoints)
             @media(min-width (key + 1)px)
 
                 if grid_order is defined && grid_order
@@ -240,8 +240,8 @@ if grid_frames is defined && grid_frames
                             flex-shrink 0
                         &-inline--{index}{grid_inverted_class}
                             width auto
-                    for firstvalue in grid_frames
-                        for secondvalue in grid_frames
+                    for firstvalue in grid_cols
+                        for secondvalue in grid_cols
                             if(firstvalue != secondvalue && firstvalue <= secondvalue)
                                 .{framework_class_prefix}cell-{firstvalue}-{secondvalue}--{index}{grid_inverted_class}
                                     width: (firstvalue / secondvalue * 100)%
@@ -297,15 +297,15 @@ if grid_frames is defined && grid_frames
                             &-shrink-{zs}--{index}{grid_inverted_class}
                                 flex-shrink: (zs / 10)
 
-    gridgap(parametr = grid_gap)
+    gridgap(parametr = grid_gap[0])
         .{framework_class_prefix}grid
-            margin-left: "%s%s" % (-(parametr / 2) grid_px)
-            margin-right: "%s%s" % (-(parametr / 2) grid_px)
-            width: "calc(100% + %s%s)" % (parametr grid_px)
+            margin-left: "%s%s" % (-(parametr / 2) grid_gap[1])
+            margin-right: "%s%s" % (-(parametr / 2) grid_gap[1])
+            width: "calc(100% + %s%s)" % (parametr grid_gap[1])
             & > [class^="cell"]
-                padding-left: "%s%s" % ((parametr / 2) grid_px)
-                padding-right: "%s%s" % ((parametr / 2) grid_px)
-                margin-bottom: "%s%s" % (parametr grid_px)
+                padding-left: "%s%s" % ((parametr / 2) grid_gap[1])
+                padding-right: "%s%s" % ((parametr / 2) grid_gap[1])
+                margin-bottom: "%s%s" % (parametr grid_gap[1])
             &-gap
                 &-x
                     & > [class^="cell"]
@@ -326,6 +326,6 @@ if grid_frames is defined && grid_frames
                     padding-right 0
                     margin-bottom 0
             &-ungap
-                margin-bottom: "%s%s" % (-(parametr) grid_px)
+                margin-bottom: "%s%s" % (-(parametr) grid_gap[1])
 
 

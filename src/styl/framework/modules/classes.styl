@@ -62,8 +62,8 @@
 
 
 // Media for classes
-if grid_bpoint is defined && grid_bpoint
-    for index, key in grid_bpoint
+if breakpoints is defined && breakpoints
+    for index, key in breakpoints
         @media(max-width (key)px)
             .{framework_class_prefix}text
                 &-center--{index}{grid_default_class}
@@ -77,7 +77,7 @@ if grid_bpoint is defined && grid_bpoint
                 &--{index}{grid_default_class}
                     display none
             
-    for index, key in invert_hash(grid_bpoint)
+    for index, key in invert_hash(breakpoints)
         @media(min-width (key + 1)px)
             .{framework_class_prefix}text
                 &-center--{index}{grid_inverted_class}

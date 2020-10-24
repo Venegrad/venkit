@@ -31,10 +31,10 @@ if mg is defined && mg
             
             
     // MediaQueries
-    if grid_bpoint is defined && grid_bpoint
+    if breakpoints is defined && breakpoints
 
         // Media Default
-        for brd, rcd in grid_bpoint
+        for brd, rcd in breakpoints
             @media(max-width (rcd)px)
 
                 // Default Margins
@@ -65,7 +65,7 @@ if mg is defined && mg
                         
 
         // Inverted MediaQueries
-        for  brd, rcd in invert_hash(grid_bpoint)
+        for  brd, rcd in invert_hash(breakpoints)
             @media(min-width (rcd + 1)px)
 
                 // Default Margins

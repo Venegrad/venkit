@@ -7,7 +7,7 @@ else
 font-url(file)
 	return '../fonts/' + file
 
-webfont(family, file, weight = normal, style = normal, fms = 'woff')
+webfont(family, file, weight = normal, style = normal, fms = 'woff2')
 	@font-face
 		font-family family
 		font-display swap
@@ -37,7 +37,6 @@ my(md)
 m(md)
 	margin md
 
-
 wrap(width = wrapper, paddingd = wrap_padding)
 	margin-left auto
 	margin-right auto
@@ -50,6 +49,13 @@ bgp(pos1 = center, pos2 = center)
 	background-repeat no-repeat
 	background-size cover
 	background-position pos1 pos2
+
+fimg()
+	object-fit cover
+	object-position center
+	absolute left 0 top 0
+	size 100%
+	display block
 
 placeholder(color)
 	&::-webkit-input-placeholder
@@ -96,7 +102,7 @@ fl(ww = 'nowrap', jj = 'flex-start', aa = 'stretch')
 		align-items aa
 
 bg(urls, positionr = 'center center', psr = 'no-repeat')
-	background-image url(css_image_path+urls) 
+	background-image url(imgs+urls) 
 	if positionr == 'c'
 		background-position center center
 	else if positionr == 'center center'
@@ -186,8 +192,8 @@ icon(hasgtag, fz = 1rem, aft = 'before')
 			font-size fz
 
 
-if grid_bpoint is defined && grid_bpoint
-	if grid_always_inverted is defined && grid_always_inverted
+if breakpoints is defined && breakpoints
+	if grid_inverted is defined && grid_inverted
 		grid_inverted_class = ''
 		grid_default_class = '-i'
 	else
@@ -195,9 +201,9 @@ if grid_bpoint is defined && grid_bpoint
 		grid_default_class = ''       
 
 	maw = {}
-	for index, key in grid_bpoint
+	for index, key in breakpoints
 		push(maw, maw[index] = '(max-width: '+key+'px)')
 
 	miw = {}
-	for index, key in invert_hash(grid_bpoint)
+	for index, key in invert_hash(breakpoints)
 		push(miw, miw[index] = '(min-width: '+(key + 1)+'px)')

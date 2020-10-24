@@ -46,6 +46,7 @@ const webpackConfig = {
   entry: {
     main: ["@babel/polyfill", "./src/js/main.js"],
   },
+
   performance: {
     hints: false,
   },
@@ -89,6 +90,10 @@ if (isDev) {
     });
 
     gulp.watch(srcPath + "fonts/**/*", gulp.series("build:fonts", "reload"));
+    gulp.watch(
+      srcPath + "styl/node_vendors.json",
+      gulp.series("build:css", "reload")
+    );
     gulp.watch(srcPath + "styl/**/*", gulp.series("build:css"));
     gulp.watch(
       srcPath + "svg/**/*",

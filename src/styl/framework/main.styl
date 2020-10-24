@@ -1,9 +1,10 @@
+node_vendors = json('../node_vendors.json', { hash: true }).vendors
 @import "../_setting.styl"
-@import "_functions.styl"
+@import "_functions.styl" 
 @import "_normalizer.styl"
 @import "modules/*.styl" 
 @import "../vendor/**/*.css"
-for vendor in node_vendors
+for index, vendor in node_vendors
   @import '../../../node_modules/'+vendor
 @import "icons.styl"
 @import "../blocks/*.styl" 
