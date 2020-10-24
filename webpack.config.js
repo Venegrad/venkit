@@ -148,7 +148,10 @@ module.exports = {
     }),
 
     new CopyPlugin({
-      patterns: [{ from: `${PATHS.src}/fonts`, to: `${PATHS.dist}/fonts` }],
+      patterns: [
+        { from: `${PATHS.src}/fonts`, to: `${PATHS.dist}/fonts` },
+        { from: `${PATHS.src}/img`, to: `${PATHS.dist}/img` },
+      ],
     }),
 
     ...PAGES.map(
