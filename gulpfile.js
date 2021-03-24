@@ -19,6 +19,7 @@ const notifier = require("node-notifier");
 const TerserPlugin = require("terser-webpack-plugin");
 const path = require("path");
 const ttfToWoff2 = require("gulp-ttftowoff2");
+const ttfToWoff = require("gulp-ttf-to-woff");
 
 const isDev = process.env.NODE_ENV === "development";
 
@@ -92,10 +93,10 @@ if (isDev) {
 
     gulp.watch(
       srcPath + "fonts/**/*.ttf",
-      gulp.series("build:woff2", "reload")
+      gulp.series("build:woff2", "build:woff", "reload")
     );
     gulp.watch(
-      srcPath + "fonts/**/*.woff2",
+      [srcPath + "fonts/**/*.woff2", srcPath + "fonts/**/*.woff"],
       gulp.series("copy:fonts", "reload")
     );
     gulp.watch(
@@ -146,13 +147,18 @@ gulp.task("build:woff2", () => {
     .pipe(gulp.dest(dstPath + "fonts"));
 });
 
+gulp.task("build:woff", () => {
+  return gulp
+    .src([srcPath + "fonts/*.ttf"])
+    .pipe(ttfToWoff())
+    .pipe(gulp.dest(dstPath + "fonts"));
+});
+
 gulp.task("build:img", function () {
   return gulp
     .src([srcPath + "img/**/*.jpg", srcPath + "img/**/*.png"])
     .pipe(!isDev ? tinypngFree({}) : noop())
-    .pipe(gulp.dest(dstPath + "img"))
-    .pipe(webp())
-    .pipe(gulp.dest(dstPath + "img/webp"));
+    .pipe(gulp.dest(dstPath + "img"));
 });
 
 gulp.task("copy:assets", function () {
@@ -171,7 +177,7 @@ gulp.task("build:php", function () {
 
 gulp.task("copy:fonts", function () {
   return gulp
-    .src(srcPath + "fonts/**/*.woff2")
+    .src([srcPath + "fonts/**/*.woff2", srcPath + "fonts/**/*.woff"])
     .pipe(gulp.dest(dstPath + "fonts"));
 });
 
@@ -226,6 +232,9 @@ gulp.task("build:css", function () {
         : cssnano({
             discardComments: {
               removeAll: true,
+            },
+            autoprefixer: {
+              remove: false,
             },
           })
     )
@@ -295,6 +304,7 @@ gulp.task(
     "build:css",
     "build:html",
     "build:woff2",
+    "build:woff",
     "copy:fonts"
   )
 );

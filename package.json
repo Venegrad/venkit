@@ -33,6 +33,7 @@
     "gulp-stylus": "^2.7.0",
     "gulp-svgo": "^2.2.1",
     "gulp-tinypng-free": "^1.0.13",
+    "gulp-ttf-to-woff": "^1.0.3",
     "gulp-ttftowoff2": "^1.0.1",
     "gulp-util": "^3.0.8",
     "gulp-webp": "^4.0.1",
@@ -46,7 +47,6 @@
     "webpack-cli": "^4.0.0"
   },
   "dependencies": {
-    "@babel/polyfill": "^7.12.1",
-    "jquery": "^3.5.1"
+    "@babel/polyfill": "^7.12.1"
   }
 }
