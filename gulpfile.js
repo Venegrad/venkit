@@ -10,7 +10,6 @@ const prettyHtml = require("gulp-pretty-html");
 const iconfont = require("gulp-iconfont");
 const consolidate = require("gulp-consolidate");
 const cssnano = require("gulp-cssnano");
-const webp = require("gulp-webp");
 const tinypngFree = require("gulp-tinypng-free");
 const svgo = require("gulp-svgo");
 const webpack = require("webpack");
@@ -18,8 +17,6 @@ const gutil = require("gulp-util");
 const notifier = require("node-notifier");
 const TerserPlugin = require("terser-webpack-plugin");
 const path = require("path");
-const ttfToWoff2 = require("gulp-ttftowoff2");
-const ttfToWoff = require("gulp-ttf-to-woff");
 
 const isDev = process.env.NODE_ENV === "development";
 
@@ -92,11 +89,7 @@ if (isDev) {
     });
 
     gulp.watch(
-      srcPath + "fonts/**/*.ttf",
-      gulp.series("build:woff2", "build:woff", "reload")
-    );
-    gulp.watch(
-      [srcPath + "fonts/**/*.woff2", srcPath + "fonts/**/*.woff"],
+      [srcPath + "fonts/**/*"],
       gulp.series("copy:fonts", "reload")
     );
     gulp.watch(
@@ -122,7 +115,6 @@ if (isDev) {
     );
     gulp.watch(srcPath + "img/**/*.svg", gulp.series("build:svg", "reload"));
     gulp.watch(srcPath + "js/**/*.js", gulp.series("build:js", "reload"));
-    gulp.watch(srcPath + "php/**/*.php", gulp.series("build:php", "reload"));
     gulp.watch(srcPath + "pug/**/*.pug", gulp.series("build:html", "reload"));
     gulp.watch(srcPath + "static/**/*", gulp.series("build:static", "reload"));
   });
@@ -140,19 +132,6 @@ gulp.task("build:svg", function () {
     .pipe(gulp.dest(dstPath + "img"));
 });
 
-gulp.task("build:woff2", () => {
-  return gulp
-    .src([srcPath + "fonts/*.ttf"])
-    .pipe(ttfToWoff2())
-    .pipe(gulp.dest(dstPath + "fonts"));
-});
-
-gulp.task("build:woff", () => {
-  return gulp
-    .src([srcPath + "fonts/*.ttf"])
-    .pipe(ttfToWoff())
-    .pipe(gulp.dest(dstPath + "fonts"));
-});
 
 gulp.task("build:img", function () {
   return gulp
@@ -171,13 +150,9 @@ gulp.task("copy:assets", function () {
     .pipe(gulp.dest(dstPath + "img"));
 });
 
-gulp.task("build:php", function () {
-  return gulp.src(srcPath + "php/**/*").pipe(gulp.dest(dstPath));
-});
-
 gulp.task("copy:fonts", function () {
   return gulp
-    .src([srcPath + "fonts/**/*.woff2", srcPath + "fonts/**/*.woff"])
+    .src(["fonts/**/*"])
     .pipe(gulp.dest(dstPath + "fonts"));
 });
 
@@ -299,12 +274,9 @@ gulp.task(
     "copy:assets",
     "build:img",
     "build:svg",
-    "build:php",
     "build:static",
     "build:css",
     "build:html",
-    "build:woff2",
-    "build:woff",
     "copy:fonts"
   )
 );
