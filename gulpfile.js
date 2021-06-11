@@ -162,7 +162,7 @@ gulp.task("copy:assets", function () {
 
 gulp.task("copy:fonts", function () {
   return gulp
-    .src(["fonts/**/*"])
+    .src(srcPath + "fonts/**/*")
     .pipe(gulp.dest(dstPath + "fonts"));
 });
 
@@ -243,7 +243,7 @@ gulp.task("build:icons", function () {
       iconfont({
         fontName: "icons",
         prependUnicode: false,
-        formats: ["woff2"],
+        formats: ["woff", "woff2"],
         normalize: true,
         fontHeight: 1000,
         timestamp: Math.round(Date.now() / 1000),
